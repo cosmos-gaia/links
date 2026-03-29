@@ -207,16 +207,38 @@
 <body>
 
    <div id="background-layer">
-        <video autoplay loop muted playsinline id="bg-video">
-            
-            <source src="landscape.webm" type="video/webm" media="(min-width: 768px)">
-            
-            <source src="portrait.webm" type="video/webm" media="(max-width: 767px)">
-            
-            Your browser does not support the video tag.
-        </video>
+        <video loop muted playsinline preload="auto" poster="poster.jpg" id="bg-video"></video>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const video = document.getElementById("bg-video");
+            
+            const setVideoSource = () => {
+                // Logika analitis penentuan rasio aspek
+                const isMobile = window.innerWidth < 768;
+                const targetSrc = isMobile ? "portrait.webm" : "landscape.webm";
+
+                // Memastikan tidak terjadi pemuatan ulang (reload) yang redundan
+                const currentSrc = video.src.split('/').pop(); 
+
+                if (currentSrc !== targetSrc) {
+                    video.src = targetSrc;
+                    video.load(); 
+                    
+                    video.play().catch(error => {
+                        console.warn("Intervensi OS mendeteksi Autoplay:", error);
+                    });
+                }
+            };
+
+            // Inisialisasi awal
+            setVideoSource();
+
+            // Mendengarkan perubahan orientasi layar secara real-time
+            window.addEventListener("resize", setVideoSource);
+        });
+    </script>
     <div class="container">
         
         
